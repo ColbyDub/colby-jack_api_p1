@@ -8,6 +8,7 @@ import org.bson.Document;
  * POJO
  * Basic User class with all user info and getters/setters
  */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     private int id;

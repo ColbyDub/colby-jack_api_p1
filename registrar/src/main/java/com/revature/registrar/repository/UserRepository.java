@@ -25,7 +25,13 @@ import java.util.List;
  */
 public class UserRepository implements CrudRepository<User> {
     private final Logger logger = LogManager.getLogger(UserRepository.class);
+    private MongoCollection<Document> usersCollection;
 
+    public void UserRepository(){
+        MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
+        MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
+        usersCollection = bookstoreDb.getCollection("users");
+    }
     /**
      * Searches the Database and returns a User with a matching ID
      * @param id
@@ -34,10 +40,7 @@ public class UserRepository implements CrudRepository<User> {
     @Override
     public User findById(int id) {
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
             Document queryDoc = new Document("id", id);
             Document authUserDoc = usersCollection.find(queryDoc).first();
 
@@ -80,10 +83,6 @@ public class UserRepository implements CrudRepository<User> {
         }
 
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
-
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
 
             usersCollection.insertOne(newUserDoc);
             //newResource.setId(newUserDoc.get("_id").toString());
@@ -181,10 +180,6 @@ public class UserRepository implements CrudRepository<User> {
         }
 
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
-
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
 
             Document query = new Document().append("id",  updatedResource.getId());
             usersCollection.updateOne(query, updates);
@@ -207,10 +202,6 @@ public class UserRepository implements CrudRepository<User> {
      */
     public List<User> findWithClass(int id) {
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
-
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
 
             Document queryDoc = new Document("classes.id", id);
             List<Document> docs = new ArrayList<>();
@@ -253,17 +244,14 @@ public class UserRepository implements CrudRepository<User> {
     /**
      * Retrieves the User with a given username and password from the database
      * @param username
-     * @param password
+     * @param encryptedPassword
      * @return
      */
-    public User findUserByCredentials(String username, String password) {
+    public User findUserByCredentials(String username, String encryptedPassword) {
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
             Document queryDoc = new Document("username", username)
-                    .append("password", password);
+                    .append("password", encryptedPassword);
 
             Document authUserDoc = usersCollection.find(queryDoc).first();
 

@@ -27,6 +27,7 @@ import java.util.*;
 public class ClassModelRepo implements CrudRepository<ClassModel>{
     private final Logger logger = LogManager.getLogger(ClassModelRepo.class);
 
+
     /**
      * Searches the Database and returns a ClassModel with a matching ID
      * @param id
