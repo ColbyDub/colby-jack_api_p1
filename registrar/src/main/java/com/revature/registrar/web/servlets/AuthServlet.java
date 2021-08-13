@@ -1,11 +1,11 @@
 package com.revature.registrar.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.bookstore.services.UserService;
-import com.revature.bookstore.util.exceptions.AuthenticationException;
-import com.revature.bookstore.web.dtos.Credentials;
-import com.revature.bookstore.web.dtos.ErrorResponse;
-import com.revature.bookstore.web.dtos.Principal;
+import com.revature.registrar.services.UserService;
+import com.revature.registrar.exceptions.AuthenticationException;
+import com.revature.registrar.web.dtos.Credentials;
+import com.revature.registrar.web.dtos.ErrorResponse;
+import com.revature.registrar.web.dtos.Principal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

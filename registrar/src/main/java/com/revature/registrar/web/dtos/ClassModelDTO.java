@@ -17,8 +17,8 @@ public class ClassModelDTO {
     private Calendar openWindow;
     private Calendar closeWindow;
 
-    private Set<UserDTO> students;
-    private Set<UserDTO> faculty; //Could have multiple faculty members per class
+    private Set<UserDTO> students = new HashSet<>();
+    private Set<UserDTO> faculty = new HashSet<>(); //Could have multiple faculty members per class
 
     public ClassModelDTO(ClassModel subject) {
         this.id = subject.getId();
@@ -27,8 +27,6 @@ public class ClassModelDTO {
         this.description = subject.getDescription();
         this.openWindow = subject.getOpenWindow();
         this.closeWindow = subject.getCloseWindow();
-        this.students = new HashSet<>();
-        this.faculty = new HashSet<>();
 
         //Convert Users into UserDTOs, we don't care about their classes
         for (Student stu : subject.getStudents()) {

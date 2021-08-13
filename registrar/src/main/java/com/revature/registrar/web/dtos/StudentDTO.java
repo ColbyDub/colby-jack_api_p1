@@ -15,6 +15,9 @@ public class StudentDTO extends UserDTO {
     public StudentDTO(Student subject) {
         super(subject);
 
+        for (ClassModel classModel : subject.getClasses()) {
+            classes.add(new ClassModelMini(classModel));
+        }
     }
 
     @Override
