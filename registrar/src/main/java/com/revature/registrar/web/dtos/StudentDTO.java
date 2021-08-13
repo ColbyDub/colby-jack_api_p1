@@ -7,9 +7,10 @@ import com.revature.registrar.models.User;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import com.revature.registrar.web.dtos.minis.ClassModelMini;
 
 public class StudentDTO extends UserDTO {
-    private Set<ClassModelDTO> classes = new HashSet<>();
+    private Set<ClassModelMini> classes = new HashSet<>();
 
     public StudentDTO(Student subject) {
         super(subject);

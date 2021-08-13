@@ -1,4 +1,4 @@
-package com.revature.registrar.web.dtos;
+package com.revature.registrar.web.dtos.minis;
 
 import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
@@ -6,10 +6,11 @@ import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Set;
 
-public class ClassModelDTO {
+//ClassModelDTO without reference to Users
+//Need this because ClassModelDTO -> FacultyDTO -> ClassModelDTO -> ...
+public class ClassModelMini {
     private int id;
     private String name;
     private int capacity;
@@ -17,27 +18,14 @@ public class ClassModelDTO {
     private Calendar openWindow;
     private Calendar closeWindow;
 
-    private Set<UserDTO> students;
-    private Set<UserDTO> faculty; //Could have multiple faculty members per class
 
-    public ClassModelDTO(ClassModel subject) {
+    public ClassModelMini(ClassModel subject) {
         this.id = subject.getId();
         this.name = subject.getName();
         this.capacity = subject.getCapacity();
         this.description = subject.getDescription();
         this.openWindow = subject.getOpenWindow();
         this.closeWindow = subject.getCloseWindow();
-        this.students = new HashSet<>();
-        this.faculty = new HashSet<>();
-
-        //Convert Users into UserDTOs, we don't care about their classes
-        for (Student stu : subject.getStudents()) {
-            students.add(new UserDTO(stu));
-        }
-
-        for (Faculty fac : subject.getFaculty()) {
-            faculty.add(new UserDTO(fac));
-        }
     }
 
 }
