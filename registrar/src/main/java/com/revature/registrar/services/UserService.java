@@ -6,7 +6,6 @@ import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
-import com.revature.registrar.pages.RegisterPage;
 import com.revature.registrar.repository.UserRepository;
 import com.revature.registrar.util.PasswordUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +21,10 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepo;
     private final Logger logger = LogManager.getLogger(UserService.class);
-    private final PasswordUtils passwordUtils;
+
+    private final PasswordUtils passUtil;
+
+
 
     private User currUser;
 
@@ -42,9 +44,9 @@ public class UserService {
         this.currUser = currUser;
     }
 
-    public UserService(UserRepository userRepo, PasswordUtils passwordUtils) {
+    public UserService(UserRepository userRepo, PasswordUtils passUtil) {
         this.userRepo = userRepo;
-        this.passwordUtils = passwordUtils;
+        this.passUtil = passUtil;
     }
 
     /**
@@ -126,7 +128,7 @@ public class UserService {
             throw new InvalidRequestException("Invalid user data provided");
         }
 
-        String encryptedPassword = passwordUtils.generateSecurePassword(user.getPassword());
+        String encryptedPassword = passUtil.generateSecurePassword(user.getPassword());
         user.setPassword(encryptedPassword);
         //pass validated user to UserRepository
         userRepo.save(user);
@@ -144,7 +146,7 @@ public class UserService {
 
         //TODO: Validation here
 
-        String encryptedPassword = passwordUtils.generateSecurePassword(password);
+        String encryptedPassword = passUtil.generateSecurePassword(password);
 
         User user = userRepo.findUserByCredentials(username, encryptedPassword);
         setCurrUser(user);

@@ -1,28 +1,28 @@
 package com.revature.registrar.web.dtos;
 
-import com.revature.bookstore.datasource.documents.AppUser;
+import com.revature.registrar.models.User;
 
 import java.util.Objects;
 
 public class Principal {
 
-    private String id;
+    private int id;
     private String username;
 
     public Principal() {
         super();
     }
 
-    public Principal(AppUser subject) {
+    public Principal(User subject) {
         this.id = subject.getId();
         this.username = subject.getUsername();
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
