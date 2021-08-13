@@ -2,14 +2,14 @@ package com.revature.registrar.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.revature.bookstore.datasource.documents.AppUser;
-import com.revature.bookstore.services.UserService;
-import com.revature.bookstore.util.exceptions.InvalidRequestException;
-import com.revature.bookstore.util.exceptions.ResourceNotFoundException;
-import com.revature.bookstore.util.exceptions.ResourcePersistenceException;
-import com.revature.bookstore.web.dtos.AppUserDTO;
-import com.revature.bookstore.web.dtos.ErrorResponse;
-import com.revature.bookstore.web.dtos.Principal;
+import com.revature.registrar.models.User;
+import com.revature.registrar.services.UserService;
+import com.revature.registrar.exceptions.InvalidRequestException;
+import com.revature.registrar.exceptions.ResourceNotFoundException;
+import com.revature.registrar.exceptions.ResourcePersistenceException;
+import com.revature.registrar.web.dtos.UserDTO;
+import com.revature.registrar.web.dtos.ErrorResponse;
+import com.revature.registrar.web.dtos.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

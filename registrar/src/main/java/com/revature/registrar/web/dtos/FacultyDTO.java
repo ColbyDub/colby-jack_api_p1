@@ -1,0 +1,29 @@
+package com.revature.registrar.web.dtos;
+
+import com.revature.registrar.models.Faculty;
+import com.revature.registrar.models.Student;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class FacultyDTO extends UserDTO {
+
+    private Set<ClassModelDTO> classes = new HashSet<>();
+
+    public FacultyDTO(Faculty subject) {
+        super(subject);
+
+    }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + this.getId() +
+                ", firstName='" + this.getFirstName() + '\'' +
+                ", lastName='" + this.getLastName() + '\'' +
+                ", email='" + this.getEmail() + '\'' +
+                ", username='" + this.getUsername() + '\'' +
+                ", isFaculty=" + "false" +
+                '}';
+    }
+}
