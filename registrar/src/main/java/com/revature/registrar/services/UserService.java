@@ -8,6 +8,7 @@ import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
 import com.revature.registrar.pages.RegisterPage;
 import com.revature.registrar.repository.UserRepository;
+import com.revature.registrar.util.PasswordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepo;
     private final Logger logger = LogManager.getLogger(UserService.class);
+    private final PasswordUtils passUtil;
 
     private User currUser;
 
@@ -40,8 +42,9 @@ public class UserService {
         this.currUser = currUser;
     }
 
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, PasswordUtils passUtil) {
         this.userRepo = userRepo;
+        this.passUtil = passUtil;
     }
 
     /**
