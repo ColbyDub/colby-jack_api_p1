@@ -67,10 +67,10 @@ public class UserServlet extends HttpServlet {
         try {
 
             if (userIdParam == null) {
-                List<AppUserDTO> users = userService.findAll();
+                List<UserDTO> users = userService.findAll();
                 respWriter.write(mapper.writeValueAsString(users));
             } else {
-                AppUserDTO user = userService.findUserById(userIdParam);
+                UserDTO user = userService.getUserWithId(Integer.parseInt(userIdParam));
                 respWriter.write(mapper.writeValueAsString(user));
             }
 
@@ -97,7 +97,7 @@ public class UserServlet extends HttpServlet {
 
         try {
 
-            AppUser newUser = mapper.readValue(req.getInputStream(), AppUser.class);
+            User newUser = mapper.readValue(req.getInputStream(), User.class);
             Principal principal = new Principal(userService.register(newUser)); // after this, the newUser should have a new id
             String payload = mapper.writeValueAsString(principal);
             respWriter.write(payload);
