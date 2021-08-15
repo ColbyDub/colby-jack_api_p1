@@ -9,23 +9,26 @@ import com.revature.registrar.exceptions.DataSourceException;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
-import com.revature.registrar.pages.RegisterPage;
 import com.revature.registrar.util.MongoClientFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Provides methods to communicate and interact with the MongoDB users collection
  */
 public class UserRepository implements CrudRepository<User> {
     private final Logger logger = LogManager.getLogger(UserRepository.class);
+    private MongoCollection<User> usersCollection;
 
+    public void UserRepository(){
+        MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
+        MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
+        usersCollection = bookstoreDb.getCollection("users",User.class);
+    }
     /**
      * Searches the Database and returns a User with a matching ID
      * @param id
@@ -34,28 +37,21 @@ public class UserRepository implements CrudRepository<User> {
     @Override
     public User findById(int id) {
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
             Document queryDoc = new Document("id", id);
-            Document authUserDoc = usersCollection.find(queryDoc).first();
+            User authUser = usersCollection.find(queryDoc).first();
 
-            if (authUserDoc == null) {
+            if (authUser == null) {
                 return null;
             }
 
-            ObjectMapper mapper = new ObjectMapper();
-            if ((boolean)authUserDoc.get("isFaculty")) {
-                Faculty fac = mapper.readValue(authUserDoc.toJson(), Faculty.class);
-                fac.setFaculty(true);
-                logger.info("Retieved(F) " + fac + "\n");
-                return fac;
+            if (authUser.isFaculty()) {
+                logger.info("Retieved(F) " + authUser + "\n");
             } else {
-                Student stu = mapper.readValue(authUserDoc.toJson(), Student.class);
-                logger.info("Retieved(S) " + stu + "\n");
-                return stu;
+                logger.info("Retieved(S) " + authUser + "\n");
             }
+
+            return authUser;
 
         } catch (Exception e) {
             logger.error(e.getStackTrace() + "\n");
@@ -70,22 +66,10 @@ public class UserRepository implements CrudRepository<User> {
      */
     @Override
     public User save(User newResource) {
-        Document newUserDoc;
-        if(newResource.isFaculty()) {
-            Faculty fac = (Faculty) newResource;
-            newUserDoc = getFacultyDoc(fac);
-        } else {
-            Student stu = (Student) newResource;
-            newUserDoc = getStudentDoc(stu);
-        }
 
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
-
-            usersCollection.insertOne(newUserDoc);
+            usersCollection.insertOne(newResource);
             //newResource.setId(newUserDoc.get("_id").toString());
             logger.info("Created " + newResource + "\n");
 
@@ -179,12 +163,7 @@ public class UserRepository implements CrudRepository<User> {
             Student stu = (Student) updatedResource;
             updates = getStudentUpdates(stu);
         }
-
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
-
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
 
             Document query = new Document().append("id",  updatedResource.getId());
             usersCollection.updateOne(query, updates);
@@ -207,27 +186,22 @@ public class UserRepository implements CrudRepository<User> {
      */
     public List<User> findWithClass(int id) {
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
-
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
 
             Document queryDoc = new Document("classes.id", id);
-            List<Document> docs = new ArrayList<>();
-            docs = usersCollection.find(queryDoc).into(docs);
-            if (docs.size() == 0) {
+            List<User> users = new ArrayList<>();
+            users = usersCollection.find(queryDoc).into(users);
+            if (users.size() == 0) {
                 return null;
             }
 
-            ObjectMapper mapper = new ObjectMapper();
             List<User> userDocs = new ArrayList<>();
-            for (Document d : docs) {
-                if ((boolean)d.get("isFaculty")) {
-                    Faculty fac = mapper.readValue(d.toJson(), Faculty.class);
+            for (User u : users) {
+                if (u.isFaculty()) {
+                    Faculty fac = (Faculty)u;
                     fac.setFaculty(true);
                     userDocs.add(fac);
                 } else {
-                    Student stu = mapper.readValue(d.toJson(), Student.class);
+                    Student stu = (Student)u;
                     userDocs.add(stu);
                 }
             }
@@ -253,32 +227,28 @@ public class UserRepository implements CrudRepository<User> {
     /**
      * Retrieves the User with a given username and password from the database
      * @param username
-     * @param password
+     * @param encryptedPassword
      * @return
      */
-    public User findUserByCredentials(String username, String password) {
+    public User findUserByCredentials(String username, String encryptedPassword) {
         try {
-            MongoClient mongoClient = MongoClientFactory.getInstance().getConnection();
 
-            MongoDatabase bookstoreDb = mongoClient.getDatabase("project0");
-            MongoCollection<Document> usersCollection = bookstoreDb.getCollection("users");
             Document queryDoc = new Document("username", username)
-                    .append("password", password);
+                    .append("password", encryptedPassword);
 
-            Document authUserDoc = usersCollection.find(queryDoc).first();
+            User authUser = usersCollection.find(queryDoc).first();
 
-            if (authUserDoc == null) {
+            if (authUser == null) {
                 return null;
             }
 
-            ObjectMapper mapper = new ObjectMapper();
-            if ((boolean)authUserDoc.get("isFaculty")) {
-                Faculty fac = mapper.readValue(authUserDoc.toJson(), Faculty.class);
+            if (authUser.isFaculty()) {
+                Faculty fac = (Faculty)authUser;
                 fac.setFaculty(true);
                 logger.info("Retieved(F) " + fac + "\n");
                 return fac;
             } else {
-                Student stu = mapper.readValue(authUserDoc.toJson(), Student.class);
+                Student stu = (Student)authUser;
                 logger.info("Retieved(S) " + stu + "\n");
                 return stu;
             }
@@ -287,5 +257,20 @@ public class UserRepository implements CrudRepository<User> {
             logger.error(e.getStackTrace() + "\n");
             throw new DataSourceException("An unexpected exception occurred.", e);
         }
+    }
+
+    @Override
+    public List<User> findAll() {
+
+        List<User> users = new ArrayList<>();
+
+        try {
+            usersCollection.find().into(users);
+        } catch (Exception e) {
+            logger.error("An unexpected exception occurred.", e);
+            throw new DataSourceException("An unexpected exception occurred.", e);
+        }
+
+        return users;
     }
 }

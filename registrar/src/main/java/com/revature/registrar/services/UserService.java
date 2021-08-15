@@ -6,14 +6,15 @@ import com.revature.registrar.models.ClassModel;
 import com.revature.registrar.models.Faculty;
 import com.revature.registrar.models.Student;
 import com.revature.registrar.models.User;
-import com.revature.registrar.pages.RegisterPage;
 import com.revature.registrar.repository.UserRepository;
 import com.revature.registrar.util.PasswordUtils;
+import com.revature.registrar.web.dtos.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Middle man between Page and Database logic. Handles general business logic and wrapper functions
@@ -22,7 +23,10 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepo;
     private final Logger logger = LogManager.getLogger(UserService.class);
+
     private final PasswordUtils passUtil;
+
+
 
     private User currUser;
 
@@ -126,6 +130,8 @@ public class UserService {
             throw new InvalidRequestException("Invalid user data provided");
         }
 
+        String encryptedPassword = passUtil.generateSecurePassword(user.getPassword());
+        user.setPassword(encryptedPassword);
         //pass validated user to UserRepository
         userRepo.save(user);
 
@@ -139,7 +145,12 @@ public class UserService {
      * @return
      */
     public User login(String username, String password) {
-        User user = userRepo.findUserByCredentials(username, password);
+
+        //TODO: Validation here
+
+        String encryptedPassword = passUtil.generateSecurePassword(password);
+
+        User user = userRepo.findUserByCredentials(username, encryptedPassword);
         setCurrUser(user);
         return user;
     }
@@ -178,6 +189,16 @@ public class UserService {
         }
     }
 
+    /**
+     * Returns a list of UserDTOs stored in db
+     * @return
+     */
+    public List<UserDTO> findAll() {
+        return userRepo.findAll()
+                .stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+    }
 
     /**
      * Returns true if a user instance is "valid".
