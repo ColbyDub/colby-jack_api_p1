@@ -1,0 +1,13 @@
+com\revature\registrar\repository\CrudRepository.class
+com\revature\registrar\models\ClassModel.class
+com\revature\registrar\models\Faculty.class
+com\revature\registrar\models\User.class
+com\revature\registrar\repository\UserRepository.class
+com\revature\registrar\util\PasswordUtils.class
+com\revature\registrar\pages\Page.class
+com\revature\registrar\models\Student.class
+com\revature\registrar\pages\DiscoverClassesPage.class
+com\revature\registrar\services\UserService.class
+com\revature\registrar\web\dtos\UserDTO.class
+com\revature\registrar\web\servlets\UserServlet.class
+com\revature\registrar\services\ClassService.class
